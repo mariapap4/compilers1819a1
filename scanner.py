@@ -1,7 +1,6 @@
 """
 Sample script to test ad-hoc scanning by table drive.
 This accepts a number with optional decimal part [0-9]+(\.[0-9]+)?
-
 NOTE: suitable for optional matches
 """
 
@@ -14,12 +13,9 @@ def getchar(text,pos):
 	c = text[pos]
 	
 	# **Σημείο #3**: Προαιρετικά, προσθέστε τις δικές σας ομαδοποιήσεις
-	
-	if c>='0' and c<='9': return 'DIGIT'	# 0..9 grouped together
-	
-	if c=='.': return 'DOT'	# dot as a category by itself
-	
-	return c	# anything else
+
+	return c
+	# anything else
 	
 
 
@@ -31,7 +27,7 @@ def scan(text,transitions,accepts):
 	
 	# initial state
 	pos = 0
-	state = 's0'
+	state = 'q0'
 	# memory for last seen accepting states
 	last_token = None
 	last_pos = None
@@ -60,15 +56,25 @@ def scan(text,transitions,accepts):
 			
 	
 # **Σημείο #1**: Αντικαταστήστε με το δικό σας λεξικό μεταβάσεων
-transitions = { 's0': { 'DIGIT':'s1' },
-       			's1': { 'DIGIT':'s1','DOT':'s2' },
-       			's2': { 'DIGIT':'s3' },
-       			's3': { 'DIGIT':'s3' }       
-     		  } 
+transitions = { 'q0': { '0':'q1','1':'q1','2':'q1','3':'q3' },
+       		    'q1': { '0':'q2','1':'q2','2':'q2','3':'q2','4':'q2','5':'q2','6':'q2','7':'q2','8':'q2','9':'q2' },
+       		    'q2': { '0':'q5'},
+       		    'q3': { '0':'q4', '1':'q4', '2':'q4', '3':'q4', '4':'q4', '5':'q4'},
+		    'q4': { '0':'q5'},
+		    'q5': { '0':'q6','1':'q6','2':'q6','3':'q6','4':'q6','5':'q6','6':'q6','7':'q6','8':'q6','9':'q6'},
+		    'q6': { '0':'q7','1':'q7','2':'q7','3':'q7','4':'q7','5':'q7','6':'q7','7':'q7','8':'q7','9':'q7'},
+		    'q7': { 'G':'q8','K':'q11','M':'q13'},
+	            'q8': { '0':'q9','1':'q9','2':'q9','3':'q9','4':'q9','5':'q9','6':'q9','7':'q9','8':'q9','9':'q9'},
+	            'q9': { '0':'q10','1':'q10','2':'q10','3':'q10','4':'q10','5':'q10','6':'q10','7':'q10','8':'q10','9':'q10'},
+	           'q10': { 'M':'q13', 'K':'q11'},
+	           'q11': { 'T':'q12'},
+	           'q13': {'P':'q14'},
+	           'q14': {'S':'q12'},
+	        }
 
 # **Σημείο #2**: Αντικαταστήστε με το δικό σας λεξικό καταστάσεων αποδοχής
-accepts = { 's1':'INT_TOKEN',
-       		's3':'FLOAT_TOKEN'	
+accepts = { 'q12':'WIND_TOKEN',
+       			
      	  }
 
 
